@@ -14,13 +14,13 @@ print("Model loaded!")
 
 # Model configuration
 class_names = ['lemon', 'orange']
-THRESHOLD = 0.6
+THRESHOLD = 0.7
 IMG_SIZE = (128, 128)
 
 
 # Prediction function
 def import_and_predict(image_data, model):
-    # Resize ONLY (no cropping)
+    # Resize
     image = image_data.resize(IMG_SIZE, Image.Resampling.LANCZOS)
     image = image.convert('RGB')
 
@@ -32,7 +32,7 @@ def import_and_predict(image_data, model):
 
 
 # Open webcam
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 if not cap.isOpened():
     print("Failed to open camera.")
     sys.exit()
@@ -55,7 +55,7 @@ while True:
     l = clahe.apply(l)
     lab = cv2.merge((l, a, b))
     frame = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
-"""
+    """
     #Center square ROI (remove bg)
     h, w, _ = frame.shape
     s = min(h, w)
@@ -73,7 +73,7 @@ while True:
     class_index = np.argmax(prediction)
     predicted_label = class_names[class_index]
 
-    # Debug (optional – uncomment once if needed)
+    # Debug
     # print("Prediction:", prediction)
 
     #Confidence-based UNKNOWN

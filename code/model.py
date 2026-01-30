@@ -68,12 +68,12 @@ def build_data_loaders(train_folder, valid_folder):
     return train_loader, valid_loader
 
 
-# CNN architecture
+# CNN
 def create_cnn_model(input_dim=(128, 128, 3), total_classes=2):
     weight_decay = regularizers.l2(1e-4)
     net = Sequential()
 
-    # -------- Block 1 --------
+    #Block 1
     net.add(Conv2D(32, (3, 3), padding="same",
                    kernel_regularizer=weight_decay,
                    input_shape=input_dim))
@@ -86,7 +86,7 @@ def create_cnn_model(input_dim=(128, 128, 3), total_classes=2):
     net.add(MaxPooling2D())
     net.add(Dropout(0.3))
 
-    # -------- Block 2 --------
+    #Block 2
     net.add(Conv2D(64, (3, 3), padding="same",
                    kernel_regularizer=weight_decay))
     net.add(BatchNormalization())
@@ -98,7 +98,7 @@ def create_cnn_model(input_dim=(128, 128, 3), total_classes=2):
     net.add(MaxPooling2D())
     net.add(Dropout(0.3))
 
-    # -------- Block 3 --------
+    #Block 3
     net.add(Conv2D(128, (3, 3), padding="same",
                    kernel_regularizer=weight_decay))
     net.add(BatchNormalization())
@@ -110,7 +110,7 @@ def create_cnn_model(input_dim=(128, 128, 3), total_classes=2):
     net.add(MaxPooling2D())
     net.add(Dropout(0.4))
 
-    # -------- Block 4 --------
+    #Block 4
     net.add(Conv2D(256, (3, 3), padding="same",
                    kernel_regularizer=weight_decay))
     net.add(BatchNormalization())
@@ -118,7 +118,7 @@ def create_cnn_model(input_dim=(128, 128, 3), total_classes=2):
     net.add(MaxPooling2D())
     net.add(Dropout(0.4))
 
-    # -------- Classifier --------
+    #Classifier
     net.add(GlobalAveragePooling2D())
     net.add(Dense(256, activation="relu",
                   kernel_regularizer=weight_decay))
@@ -128,7 +128,7 @@ def create_cnn_model(input_dim=(128, 128, 3), total_classes=2):
     return net
 
 
-# Data preparation
+#Data preparation
 train_loader, valid_loader = build_data_loaders(DATA_TRAIN, DATA_VALID)
 
 label_ids = np.unique(train_loader.classes)
@@ -143,7 +143,7 @@ print("Computed Class Weights:", weight_map)
 print("Class Mapping:", train_loader.class_indices)
 
 
-# Model compilation
+#Model compilation
 cnn_model = create_cnn_model()
 
 cnn_model.compile(
@@ -153,7 +153,7 @@ cnn_model.compile(
 )
 
 
-# Training configuration
+#Training configuration
 stopper = EarlyStopping(
     monitor="val_loss",
     patience=5,
@@ -173,7 +173,7 @@ saver = ModelCheckpoint(
 )
 
 
-# Model training
+#Model training
 with tf.device("/GPU:0"):
     training_log = cnn_model.fit(
         train_loader,
@@ -187,7 +187,7 @@ with tf.device("/GPU:0"):
 
 cnn_model.save("final_model.keras")
 
-# Test set evaluation (FINAL, unbiased evaluation)
+#Test evaluation
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 test_generator = test_datagen.flow_from_directory(
@@ -203,7 +203,7 @@ print(f"Test Accuracy: {test_acc:.4f}")
 print(f"Test Loss: {test_loss:.4f}")
 
 
-# Training curves
+#Training curves
 plt.figure(figsize=(12, 5))
 
 plt.subplot(1, 2, 1)
@@ -228,7 +228,7 @@ plt.tight_layout()
 plt.show()
 
 
-# Confusion matrix
+#Confusion matrix
 val_output = cnn_model.predict(valid_loader, verbose=0)
 predicted_ids = np.argmax(val_output, axis=1)
 true_ids = valid_loader.classes

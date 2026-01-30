@@ -4,9 +4,7 @@ import tensorflow as tf
 from PIL import Image
 
 
-# ======================
 # Page config
-# ======================
 st.set_page_config(
     page_title="Lemon vs Orange",
     page_icon="🍋",
@@ -14,9 +12,6 @@ st.set_page_config(
 )
 
 
-# ======================
-# Minimalist CSS
-# ======================
 st.markdown("""
 <style>
 html, body, [class*="css"] {
@@ -78,9 +73,7 @@ h1 {
 """, unsafe_allow_html=True)
 
 
-# ======================
 # Load model
-# ======================
 MODEL_PATH = r"C:\Users\KyawNyi\Desktop\ML\code\best_model.keras"
 model = tf.keras.models.load_model(MODEL_PATH)
 
@@ -88,9 +81,7 @@ class_names = ["lemon", "orange"]
 THRESHOLD = 0.7
 
 
-# ======================
 # Prediction function
-# ======================
 def import_and_predict(image_data, model):
     image = image_data.resize((128, 128))
     image = image.convert("RGB")
@@ -99,9 +90,7 @@ def import_and_predict(image_data, model):
     return model.predict(image, verbose=0)[0]
 
 
-# ======================
 # Header
-# ======================
 st.markdown("""
 <h1>🍋 Lemon <span style="color:#6B6B6B;">vs</span> 🍊 Orange</h1>
 <p class="subtitle">
@@ -110,15 +99,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ======================
 # Two-column layout
-# ======================
 left, right = st.columns([1, 1])
 
 
-# ======================
 # LEFT — Upload & preview
-# ======================
 with left:
     st.markdown('<div class="section-title">Upload image</div>', unsafe_allow_html=True)
     file = st.file_uploader("", type=["jpg", "jpeg", "png"])
@@ -128,9 +113,7 @@ with left:
         st.image(image, width=420)
 
 
-# ======================
 # RIGHT — Prediction
-# ======================
 with right:
     if file:
         prediction = import_and_predict(image, model)
@@ -161,9 +144,7 @@ with right:
 
         st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-        # ======================
         # Confidence breakdown
-        # ======================
         st.markdown('<div class="section-title">Confidence breakdown</div>', unsafe_allow_html=True)
 
         # Lemon
